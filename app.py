@@ -1,17 +1,43 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, redirect, request
 import webbrowser
 import threading
 import sqlite3
+import os
 from datetime import date
 from database import inicializar_db, conectar
 from routes.productos import productos_bp
 from routes.ventas import ventas_bp
+from licencia import primera_ejecucion, verificar_licencia, activar_licencia, obtener_fecha_instalacion
 
 app = Flask(__name__)
 app.secret_key = 'petshop2024'
 
 app.register_blueprint(productos_bp)
 app.register_blueprint(ventas_bp)
+
+@app.before_request
+def chequear_licencia():
+    rutas_libres = ['/activar', '/licencia-vencida']
+    if request.path not in rutas_libres:
+        if not verificar_licencia():
+            return redirect('/licencia-vencida')
+
+@app.route('/licencia-vencida')
+def licencia_vencida():
+    return render_template('licencia_vencida.html',
+        fecha_instalacion=str(obtener_fecha_instalacion()),
+        error=None
+    )
+
+@app.route('/activar', methods=['POST'])
+def activar():
+    clave = request.form.get('clave', '')
+    if activar_licencia(clave):
+        return redirect('/')
+    return render_template('licencia_vencida.html',
+        fecha_instalacion=str(obtener_fecha_instalacion()),
+        error='Clave incorrecta. Verificá e intentá de nuevo.'
+    )
 
 @app.route('/')
 def inicio():
@@ -45,6 +71,8 @@ def abrir_navegador():
     webbrowser.open('http://localhost:5000')
 
 if __name__ == '__main__':
+    primera_ejecucion()
     inicializar_db()
-    threading.Timer(1, abrir_navegador).start()
+    if os.environ.get('WERKZEUG_RUN_MAIN') != 'true':
+        threading.Timer(1, abrir_navegador).start()
     app.run(debug=True)

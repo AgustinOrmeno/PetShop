@@ -7,3 +7,6 @@ __pycache__/
 .env
 *.exe
 instance/
+python/
+get-pip.py
+.lic
