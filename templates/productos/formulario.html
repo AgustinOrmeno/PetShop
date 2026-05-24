@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block contenido %}
+
+<div class="titulo-pagina">
+    <i class="bi bi-box-seam"></i>
+    {{ 'Editar Producto' if producto else 'Nuevo Producto' }}
+</div>
+
+<div class="card" style="max-width: 600px;">
+    <div class="card-body">
+        <form method="POST">
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Nombre *</label>
+                <input type="text" name="nombre" class="form-control"
+                       value="{{ producto.nombre if producto else '' }}" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Descripción</label>
+                <input type="text" name="descripcion" class="form-control"
+                       value="{{ producto.descripcion if producto else '' }}"
+                       placeholder="Ej: Alimento balanceado para perros">
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-bold">Precio por kg $</label>
+                    <input type="number" name="precio_kg" class="form-control"
+                           step="0.01" min="0"
+                           value="{{ producto.precio_kg if producto else '' }}">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-bold">Precio bolsón $</label>
+                    <input type="number" name="precio_bolson" class="form-control"
+                           step="0.01" min="0"
+                           value="{{ producto.precio_bolson if producto else '' }}">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-bold">Peso del bolsón (kg)</label>
+                    <input type="number" name="peso_bolson_kg" class="form-control"
+                           step="0.1" min="0"
+                           value="{{ producto.peso_bolson_kg if producto else '0' }}">
+                    <small class="text-muted">Cuántos kg tiene un bolsón entero</small>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-bold">Stock actual (kg)</label>
+                    <input type="number" name="stock_kg" class="form-control"
+                           step="0.1" min="0"
+                           value="{{ producto.stock_kg if producto else '0' }}">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-bold">Stock mínimo (kg)</label>
+                    <input type="number" name="stock_minimo_kg" class="form-control"
+                           step="0.1" min="0"
+                           value="{{ producto.stock_minimo_kg if producto else '5' }}">
+                    <small class="text-muted">Cuando baje de este valor te avisa</small>
+                </div>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-circle"></i>
+                    {{ 'Guardar cambios' if producto else 'Agregar producto' }}
+                </button>
+                <a href="/productos" class="btn btn-outline-secondary">Cancelar</a>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+{% endblock %}

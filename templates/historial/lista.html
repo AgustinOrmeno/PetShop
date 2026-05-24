@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block contenido %}
+
+<div class="titulo-pagina">
+    <i class="bi bi-clock-history"></i> Historial de Ventas
+</div>
+
+{% if ventas %}
+
+<!-- Buscador por fecha -->
+<div class="card mb-3">
+    <div class="card-body">
+        <div class="row g-2 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label fw-bold">Filtrar por fecha</label>
+                <input type="date" id="filtro-fecha" class="form-control" onchange="filtrarFecha()">
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-outline-secondary" onclick="limpiarFiltro()">
+                    <i class="bi bi-x-circle"></i> Limpiar
+                </button>
+            </div>
+            <div class="col-md-7 text-end">
+                <span class="text-muted">Total de ventas: <strong>{{ ventas|length }}</strong></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+        <table class="table mb-0" id="tabla-ventas">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Fecha</th>
+                    <th>Cliente</th>
+                    <th>Total</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for v in ventas %}
+                <tr data-fecha="{{ v.fecha }}">
+                    <td>#{{ v.id }}</td>
+                    <td>{{ v.fecha }}</td>
+                    <td>{{ v.cliente or 'Consumidor Final' }}</td>
+                    <td class="fw-bold text-primary">$ {{ "%.2f"|format(v.total) }}</td>
+                    <td>
+                        <a href="/ventas/{{ v.id }}" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-eye"></i> Ver
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% else %}
+<div class="text-center py-5 text-muted">
+    <i class="bi bi-clock-history fs-1"></i>
+    <p class="mt-3">Todavía no hay ventas registradas.</p>
+    <a href="/ventas/nueva" class="btn btn-primary">Hacer la primera venta</a>
+</div>
+{% endif %}
+
+<script>
+    function filtrarFecha() {
+        const fecha = document.getElementById('filtro-fecha').value;
+        document.querySelectorAll('#tabla-ventas tbody tr').forEach(fila => {
+            fila.style.display = (!fecha || fila.dataset.fecha === fecha) ? '' : 'none';
+        });
+    }
+
+    function limpiarFiltro() {
+        document.getElementById('filtro-fecha').value = '';
+        document.querySelectorAll('#tabla-ventas tbody tr').forEach(fila => {
+            fila.style.display = '';
+        });
+    }
+</script>
+
+{% endblock %}

@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block contenido %}
+
+<div class="d-flex justify-content-between align-items-center titulo-pagina">
+    <span><i class="bi bi-receipt"></i> Detalle de Venta #{{ venta.id }}</span>
+    <a href="/ventas/nueva" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Nueva Venta
+    </a>
+</div>
+
+<div class="row">
+
+    <!-- Detalle -->
+    <div class="col-md-8">
+        <div class="card mb-3">
+            <div class="card-header bg-dark text-white">
+                <i class="bi bi-list-ul"></i> Productos vendidos
+            </div>
+            <div class="card-body p-0">
+                <table class="table mb-0">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Tipo</th>
+                            <th>Cantidad</th>
+                            <th>Precio unit.</th>
+                            <th>Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in detalle %}
+                        <tr>
+                            <td><strong>{{ item.nombre }}</strong></td>
+                            <td>
+                                {% if item.tipo_venta == 'kg' %}
+                                    <span class="badge bg-primary">Por kg</span>
+                                {% else %}
+                                    <span class="badge bg-success">Bolsón entero</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if item.tipo_venta == 'kg' %}
+                                    {{ item.cantidad }} kg
+                                {% else %}
+                                    {{ item.cantidad|int }} bolsón{% if item.cantidad > 1 %}es{% endif %}
+                                {% endif %}
+                            </td>
+                            <td>$ {{ "%.2f"|format(item.precio_unitario) }}</td>
+                            <td>$ {{ "%.2f"|format(item.subtotal) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr class="table-dark">
+                            <td colspan="4" class="text-end fw-bold">TOTAL</td>
+                            <td class="fw-bold fs-5">$ {{ "%.2f"|format(venta.total) }}</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Info de la venta -->
+    <div class="col-md-4">
+        <div class="card mb-3">
+            <div class="card-header bg-dark text-white">
+                <i class="bi bi-info-circle"></i> Información
+            </div>
+            <div class="card-body">
+                <p><strong>N° de venta:</strong> #{{ venta.id }}</p>
+                <p><strong>Fecha:</strong> {{ venta.fecha }}</p>
+                <p><strong>Cliente:</strong> {{ venta.cliente or 'Consumidor Final' }}</p>
+                <p class="mb-0"><strong>Total:</strong>
+                    <span class="text-primary fs-5 fw-bold">
+                        $ {{ "%.2f"|format(venta.total) }}
+                    </span>
+                </p>
+            </div>
+        </div>
+
+        <div class="d-grid gap-2">
+            <a href="/historial" class="btn btn-outline-secondary">
+                <i class="bi bi-clock-history"></i> Ver historial
+            </a>
+            <a href="/" class="btn btn-outline-primary">
+                <i class="bi bi-house"></i> Volver al inicio
+            </a>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

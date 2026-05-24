@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PetShop</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Iconos -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Nuestros estilos -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+<div class="d-flex">
+
+    <!-- Menú lateral -->
+    <div class="sidebar">
+        <div class="logo">🐾 PetShop</div>
+
+        <a href="/" class="{{ 'activo' if request.path == '/' }}">
+            <i class="bi bi-house"></i> Inicio
+        </a>
+        <a href="/productos" class="{{ 'activo' if request.path.startswith('/productos') }}">
+            <i class="bi bi-box-seam"></i> Productos
+        </a>
+        <a href="/ventas/nueva" class="{{ 'activo' if request.path.startswith('/ventas') }}">
+            <i class="bi bi-cart3"></i> Nueva Venta
+        </a>
+        <a href="/historial" class="{{ 'activo' if request.path.startswith('/historial') }}">
+            <i class="bi bi-clock-history"></i> Historial
+        </a>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="contenido">
+
+        <!-- Mensajes flash (confirmaciones y errores) -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endwith %}
+
+        <!-- Acá va el contenido de cada pantalla -->
+        {% block contenido %}{% endblock %}
+
+    </div>
+
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
